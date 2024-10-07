@@ -1,0 +1,56 @@
+/* General */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Roboto Mono";
+}
+
+/* Navigation */
+nav {
+    height: 8vh;
+    border-bottom: 1px solid lightgray;
+    box-shadow: 0 4px 2px -2px lightgray;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#navTitle {
+    font-size: xx-large;
+    margin-left: 20px;
+}
+
+nav > img {
+    height: 60px;
+    border-radius: 60px;
+}
+
+nav > img:hover {
+    background-color: darkgray;
+    cursor: pointer;
+}
+
+/* Footer */
+footer {
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    height: 4vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+#footerIcon {
+    height: 30px;
+    border-radius: 30px;
+}
+
+#footerIcon:hover {
+    background-color: darkgray;
+    cursor: pointer;
+}
