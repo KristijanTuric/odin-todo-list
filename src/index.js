@@ -1,8 +1,6 @@
 import "./style.css";
 import { Task } from "./task";
-
-// Console testing
-const newTask = new Task("The Title", "This will describe your task", "1/1/1996", 1);
+import { displayAllTasks, displayThisWeekTasks, displayTodayTasks } from "./allTasks";
 
 //#region Side Navigation
 
@@ -18,11 +16,47 @@ closeSideNav.addEventListener('click', () => {
 
 //#endregion 
 
+//#region Display different tasks
+
+const content = document.getElementById("content");
+
+const todayTasks = document.getElementById("todayButton");
+const weekTasks = document.getElementById("weekButton");
+const allTasks = document.getElementById("allButton");
+
+todayTasks.addEventListener('click', () => {
+    clearAllChildren(content);
+    displayTodayTasks();
+});
+
+weekTasks.addEventListener('click', () => {
+    clearAllChildren(content);
+    displayThisWeekTasks();
+});
+
+allTasks.addEventListener('click', () => {
+    clearAllChildren(content);
+    displayAllTasks();
+});
+
+//#endregion
+
 //#region Footer
 
 const footerIcon = document.getElementById("footerIcon");
 footerIcon.addEventListener('click',() => {
     window.open("https://github.com/KristijanTuric/odin-todo-list", '_blank').focus();
 })
+
+//#endregion
+
+//#region Helper Function
+
+// Clears all children of the given element
+function clearAllChildren (element) {
+    while (element.hasChildNodes()) {
+        element.removeChild(element.lastChild);
+    }
+}
 
 //#endregion

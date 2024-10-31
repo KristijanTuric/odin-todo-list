@@ -84,6 +84,35 @@ nav > img:hover {
     color: darkgray;
 }
 
+#allButton:hover {
+    cursor: pointer;
+    color: darkgray;
+}
+
+/* Content */
+#content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.taskButtons {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    margin-right: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.taskButtons:hover {
+    border-radius: 10px;
+    background-color: lightgray;
+}
+
 /* Footer */
 footer {
     position: fixed;

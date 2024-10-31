@@ -2,6 +2,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <title>To Do List</title>
 </head>
 <body>
@@ -11,18 +14,19 @@
     </nav>
     <div id="sidenav" class="sidenav">
         <a href="javascript:void(0)" id="closeSideNav" class="closeSideNav">&times;</a>
-        <div class="sideNavSection">All tasks</div>
-        <a href="#">Today</a>
-        <a href="#">This week</a>
+        <div class="sideNavSection" id="allButton">All tasks</div>
+        <a href="#" id="todayButton">Today</a>
+        <a href="#" id="weekButton">This week</a>
         <div id="projectsnav" class="sideNavSection">Projects
             <a href="#">Programming</a>
             <a href="#">Gym</a>
         </div>
     </div>
 
-    <span id="openSideNav" class="zoom">&#9776;</span>
+    <span id="openSideNav">&#9776;</span>
 
     <div id="content">
+
     </div>
     <footer>
         <div>Made by Kristijan</div>
