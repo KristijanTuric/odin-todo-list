@@ -1,5 +1,4 @@
 import "./style.css";
-import { Task } from "./task";
 import { displayAllTasks, displayThisWeekTasks, displayTodayTasks } from "./allTasks";
 
 //#region Side Navigation
@@ -24,16 +23,19 @@ const todayTasks = document.getElementById("todayButton");
 const weekTasks = document.getElementById("weekButton");
 const allTasks = document.getElementById("allButton");
 
+// Todays tasks
 todayTasks.addEventListener('click', () => {
     clearAllChildren(content);
     displayTodayTasks();
 });
 
+// Current weeks tasks
 weekTasks.addEventListener('click', () => {
     clearAllChildren(content);
     displayThisWeekTasks();
 });
 
+// All tasks
 allTasks.addEventListener('click', () => {
     clearAllChildren(content);
     displayAllTasks();
