@@ -3,6 +3,14 @@ import { Task } from "./task";
 var allTasks = [];
 var displayMode = 0;
 
+/* For testing
+allTasks[0] = new Task("Test One", "Test one Desc", "2024-11-03", 1);
+allTasks[1] = new Task("Test Two", "Test two Desc", "2024-11-13", 1);
+allTasks[2] = new Task("Test Three", "Test three Desc", "2024-11-05", 1);
+allTasks[3] = new Task("Test Four", "Test four Desc", "2024-11-23", 1);
+saveAllTasks();
+*/
+
 // Get the main content element
 const content = document.getElementById("content");
 
@@ -70,8 +78,6 @@ function displayAllTasks () {
     for(let i = 0; i < allTasks.length; i++) {
         displayTask(allTasks[i]);
     }
-
-    displayDialog();
 }
 
 // Save the current task state to localStorage
@@ -80,7 +86,12 @@ function saveAllTasks() {
 }
 
 // Delete the given task
-function deleteTask(task) {
+async function deleteTask(task) {
+
+    const userRespnose = await displayDialog("Are you sure?");
+
+    if (userRespnose === "No") return;
+
     allTasks.splice(allTasks.indexOf(task), 1);
 
     // Clear the view
@@ -96,23 +107,35 @@ function deleteTask(task) {
     saveAllTasks();
 }
 
-function displayDialog() {
-    const newDial = document.createElement("dialog");
+function displayDialog(title) {
+    return new Promise((resolve) => {
+        const newDial = document.createElement("dialog");
 
-    const dialTitle = document.createElement("div");
-    dialTitle.textContent = "This is for you my friend...";
-    newDial.appendChild(dialTitle);
+        const dialTitle = document.createElement("div");
+        dialTitle.textContent = title;
+        newDial.appendChild(dialTitle);
 
-    const closeBtn = document.createElement("button");
-    closeBtn.textContent = "Close";
-    newDial.appendChild(closeBtn);
+        const closeBtn = document.createElement("button");
+        closeBtn.textContent = "No";
+        newDial.appendChild(closeBtn);
 
-    closeBtn.addEventListener('click', () => {
-        newDial.close();
+        const confirmBtn = document.createElement("button");
+        confirmBtn.textContent = "Yes"
+        newDial.appendChild(confirmBtn);
+
+        closeBtn.addEventListener('click', () => {
+            newDial.close();
+            resolve("No");
+        });
+
+        confirmBtn.addEventListener('click', () => {
+            newDial.close();
+            resolve("Yes");
+        });
+
+        content.appendChild(newDial);
+        newDial.showModal();
     });
-
-    content.appendChild(newDial);
-    newDial.showModal();
 }
 
 // Display the given task
