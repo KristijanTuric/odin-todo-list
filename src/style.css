@@ -18,17 +18,26 @@ nav {
     justify-content: space-between;
 }
 
+nav > div {
+    display: flex;
+    gap: 20px;
+}
+
+nav > div > button {
+    width: 12vw;
+}
+
 #navTitle {
     font-size: xx-large;
     margin-left: 20px;
 }
 
-nav > img {
+nav > div > img {
     height: 60px;
     border-radius: 60px;
 }
 
-nav > img:hover {
+nav > div > img:hover {
     background-color: darkgray;
     cursor: pointer;
 }

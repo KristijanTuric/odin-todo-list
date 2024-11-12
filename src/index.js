@@ -1,5 +1,5 @@
 import "./style.css";
-import { displayAllTasks, displayThisWeekTasks, displayTodayTasks } from "./allTasks";
+import { displayAllTasks, displayThisWeekTasks, displayTodayTasks, newTaskDialog } from "./allTasks";
 
 //#region Side Navigation
 
@@ -14,6 +14,15 @@ closeSideNav.addEventListener('click', () => {
 })
 
 //#endregion 
+
+//#region Navigation Bar
+
+const newTaskButton = document.getElementById("newTaskButton");
+newTaskButton.addEventListener('click', () => {
+    newTaskDialog();
+});
+
+//#endregion
 
 //#region Display different tasks
 

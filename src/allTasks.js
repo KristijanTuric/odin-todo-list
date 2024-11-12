@@ -3,14 +3,6 @@ import { Task } from "./task";
 var allTasks = [];
 var displayMode = 0;
 
-/* For testing
-allTasks[0] = new Task("Test One", "Test one Desc", "2024-11-03", 1);
-allTasks[1] = new Task("Test Two", "Test two Desc", "2024-11-13", 1);
-allTasks[2] = new Task("Test Three", "Test three Desc", "2024-11-05", 1);
-allTasks[3] = new Task("Test Four", "Test four Desc", "2024-11-23", 1);
-saveAllTasks();
-*/
-
 // Get the main content element
 const content = document.getElementById("content");
 
@@ -24,6 +16,11 @@ else {
         allTasks[i] = new Task(tempTasks[i].title, tempTasks[i].description, tempTasks[i].dueDate, tempTasks[i].priority);
     }
 }
+
+// Shows all tasks on website load
+window.onload = refreshDisplay();
+
+//#region Filtering tasks
 
 // Displays all tasks for today
 function displayTodayTasks () {
@@ -80,6 +77,214 @@ function displayAllTasks () {
     }
 }
 
+//#endregion
+
+//#region Task helper functions
+
+// Create a new task and save it into local storage
+function createNewTask(title, description, dueDate, priority) {
+    var newTask = new Task(title, description, dueDate, priority);
+    allTasks[allTasks.length] = newTask;
+    saveAllTasks();
+}
+
+// Saves the given task
+function saveNewTask(task) {
+    allTasks[allTasks.length] = task;
+    saveAllTasks();
+}
+
+// Clears the view and displays the tasks accordingly
+function refreshDisplay() {
+    // Clear the view
+    while (content.hasChildNodes()) {
+        content.removeChild(content.lastChild);
+    }
+            
+    // Update the view depending on which tasks were displayed
+    if (displayMode === 0) displayAllTasks();
+    else if (displayMode === 1) displayThisWeekTasks();
+    else if (displayMode === 2) displayTodayTasks();
+}
+
+// New task dialog
+function newTaskDialog() {
+    const newTaskDial = document.createElement("dialog");
+
+    newTaskDial.style.width = "20vw";
+    newTaskDial.style.display = "flex";
+    newTaskDial.style.flexDirection = "column";
+
+    const dialogTitle = document.createElement("div");
+    dialogTitle.textContent = "New Task";
+    newTaskDial.append(dialogTitle);    
+
+    // Title
+    const titleLbl = document.createElement("label");
+    titleLbl.textContent = "Title";
+    newTaskDial.append(titleLbl);
+
+    const titleInput = document.createElement("input");
+    titleInput.type = "text";
+    newTaskDial.append(titleInput);
+
+    // Description
+    const descLbl = document.createElement("label");
+    descLbl.textContent = "Description";
+    newTaskDial.append(descLbl);
+
+    const descInput = document.createElement("input");
+    descInput.type = "text";
+    newTaskDial.append(descInput);
+
+    // Due Date
+    const dueDateLbl = document.createElement("label");
+    dueDateLbl.textContent = "Due Date";
+    newTaskDial.append(dueDateLbl);
+
+    const dueDateInput = document.createElement("input");
+    dueDateInput.type = "date";
+    var tempToday = new Date();
+    dueDateInput.min = tempToday.getFullYear() + "-" + (tempToday.getMonth() + 1).toString() + "-" + tempToday.getDate();
+    newTaskDial.append(dueDateInput);
+    
+    // Priority
+    const priorityLbl = document.createElement("label");
+    priorityLbl.textContent = "Priority";
+    newTaskDial.append(priorityLbl);
+
+    const priorityInput = document.createElement("input");
+    priorityInput.type = "number";
+    newTaskDial.append(priorityInput);
+
+    // Buttons
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "Cancel";
+    newTaskDial.appendChild(closeBtn);
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.textContent = "Add Task"
+    newTaskDial.appendChild(confirmBtn);
+
+    closeBtn.addEventListener('click', () => {
+        newTaskDial.close();
+        newTaskDial.remove();
+    });
+
+    confirmBtn.addEventListener('click', () => {
+
+        // Check if all fields are filled
+        if (titleInput.value == "" || descInput.value == "" || dueDateInput.value == "" || priorityInput.value == "") {
+            alert("Please fill out all the fields with the correct values.");
+        }
+        else {
+            var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value);
+
+            saveNewTask(tempTask);
+            newTaskDial.close();
+            newTaskDial.remove();
+
+            refreshDisplay();
+        }
+
+    });
+
+    content.appendChild(newTaskDial);
+    newTaskDial.showModal();
+}
+
+// Edit task dialog
+function editTaskDialog(task) {
+    const newTaskDial = document.createElement("dialog");
+
+    newTaskDial.style.width = "20vw";
+    newTaskDial.style.display = "flex";
+    newTaskDial.style.flexDirection = "column";
+
+    const dialogTitle = document.createElement("div");
+    dialogTitle.textContent = "Edit Task";
+    newTaskDial.append(dialogTitle);    
+
+    // Title
+    const titleLbl = document.createElement("label");
+    titleLbl.textContent = "Title";
+    newTaskDial.append(titleLbl);
+
+    const titleInput = document.createElement("input");
+    titleInput.type = "text";
+    titleInput.value = task.title;
+    newTaskDial.append(titleInput);
+
+    // Description
+    const descLbl = document.createElement("label");
+    descLbl.textContent = "Description";
+    newTaskDial.append(descLbl);
+
+    const descInput = document.createElement("input");
+    descInput.type = "text";
+    descInput.value = task.description;
+    newTaskDial.append(descInput);
+
+    // Due Date
+    const dueDateLbl = document.createElement("label");
+    dueDateLbl.textContent = "Due Date";
+    newTaskDial.append(dueDateLbl);
+
+    const dueDateInput = document.createElement("input");
+    dueDateInput.type = "date";
+    dueDateInput.value = task.dueDate;
+    var tempToday = new Date();
+    dueDateInput.min = tempToday.getFullYear() + "-" + (tempToday.getMonth() + 1).toString() + "-" + tempToday.getDate();
+    newTaskDial.append(dueDateInput);
+    
+    // Priority
+    const priorityLbl = document.createElement("label");
+    priorityLbl.textContent = "Priority";
+    newTaskDial.append(priorityLbl);
+
+    const priorityInput = document.createElement("input");
+    priorityInput.type = "number";
+    priorityInput.value = task.priority;
+    newTaskDial.append(priorityInput);
+
+    // Buttons
+    const closeBtn = document.createElement("button");
+    closeBtn.textContent = "Cancel";
+    newTaskDial.appendChild(closeBtn);
+
+    const confirmBtn = document.createElement("button");
+    confirmBtn.textContent = "Save"
+    newTaskDial.appendChild(confirmBtn);
+
+    closeBtn.addEventListener('click', () => {
+        newTaskDial.close();
+        newTaskDial.remove();
+    });
+
+    confirmBtn.addEventListener('click', () => {
+        // Check if all fields are filled
+        if (titleInput.value == "" || descInput.value == "" || dueDateInput.value == "" || priorityInput.value == "") {
+            alert("Please fill out all the fields with the correct values.");
+        }
+        else {
+            task.title = titleInput.value;
+            task.description = descInput.value;
+            task.dueDate = dueDateInput.value;
+            task.priority = priorityInput.value;
+
+            saveAllTasks();
+
+            newTaskDial.close();
+            newTaskDial.remove();
+
+            refreshDisplay();
+        }
+    });
+
+    content.appendChild(newTaskDial);
+    newTaskDial.showModal();
+}
+
 // Save the current task state to localStorage
 function saveAllTasks() {
     localStorage.setItem('allTasks', JSON.stringify(allTasks));
@@ -94,19 +299,12 @@ async function deleteTask(task) {
 
     allTasks.splice(allTasks.indexOf(task), 1);
 
-    // Clear the view
-    while (content.hasChildNodes()) {
-        content.removeChild(content.lastChild);
-    }
-
-    // Update the view depending on which tasks were displayed
-    if (displayMode === 0) displayAllTasks();
-    else if (displayMode === 1) displayThisWeekTasks();
-    else if (displayMode === 2) displayTodayTasks();
+    refreshDisplay();
 
     saveAllTasks();
 }
 
+// Confirmation dialog for deleting tasks
 function displayDialog(title) {
     return new Promise((resolve) => {
         const newDial = document.createElement("dialog");
@@ -125,11 +323,13 @@ function displayDialog(title) {
 
         closeBtn.addEventListener('click', () => {
             newDial.close();
+            newDial.remove();
             resolve("No");
         });
 
         confirmBtn.addEventListener('click', () => {
             newDial.close();
+            newDial.remove();
             resolve("Yes");
         });
 
@@ -181,9 +381,15 @@ function displayTask(task) {
         deleteTask(task);
     });
 
+    editDiv.addEventListener('click', () => {
+        editTaskDialog(task);
+    });
+
     newDiv.appendChild(deleteDiv);
 
     content.appendChild(newDiv);
 }
 
-export { displayTodayTasks, displayThisWeekTasks, displayAllTasks };
+//#endregion
+
+export { displayTodayTasks, displayThisWeekTasks, displayAllTasks, newTaskDialog };
