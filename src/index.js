@@ -34,18 +34,21 @@ const allTasks = document.getElementById("allButton");
 
 // Todays tasks
 todayTasks.addEventListener('click', () => {
+    document.getElementById("sidenav").style.width = "0px";
     clearAllChildren(content);
     displayTodayTasks();
 });
 
 // Current weeks tasks
 weekTasks.addEventListener('click', () => {
+    document.getElementById("sidenav").style.width = "0px";
     clearAllChildren(content);
     displayThisWeekTasks();
 });
 
 // All tasks
 allTasks.addEventListener('click', () => {
+    document.getElementById("sidenav").style.width = "0px";
     clearAllChildren(content);
     displayAllTasks();
 });

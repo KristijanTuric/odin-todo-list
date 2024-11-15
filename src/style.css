@@ -25,6 +25,9 @@ nav > div {
 
 nav > div > button {
     width: 12vw;
+    min-width: 50px;
+    border: none;
+    font-size: x-large;
 }
 
 #navTitle {
@@ -86,6 +89,7 @@ nav > div > img:hover {
 #openSideNav {
     font-size: 35px;
     margin-left: 20px;
+    margin-right: auto;
 }
 
 #openSideNav:hover {
@@ -101,8 +105,23 @@ nav > div > img:hover {
 /* Content */
 #content {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px;
+    justify-content: center;
+}
+
+#contentTop {
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+#contentTitle {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .taskButtons {
@@ -144,6 +163,8 @@ footer {
     cursor: pointer;
 }
 
+/* Dialogs */
+
 dialog
 {
     position: absolute;
@@ -151,6 +172,21 @@ dialog
     top: 50%;
     transform: translate(-50%, -50%);
     border-radius: 10px;
-    border: 2px solid black;
     width: 25vw;
+}
+
+/* Custom Rounded Button Style */
+.button-rounded {
+    padding: 5px 20px;
+    border: none;
+    border-radius: 20px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: filter 0.3s ease;
+}
+
+.button-rounded:hover {
+    filter: brightness(85%);
 }

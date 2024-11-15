@@ -1,10 +1,13 @@
 import { Task } from "./task";
 
+const monthsLong = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 var allTasks = [];
 var displayMode = 0;
 
 // Get the main content element
 const content = document.getElementById("content");
+const contentTitle = document.getElementById("contentTitle");
 
 // Check if any tasks exist
 if (localStorage.getItem('allTasks') === null) {
@@ -25,6 +28,7 @@ window.onload = refreshDisplay();
 // Displays all tasks for today
 function displayTodayTasks () {
     displayMode = 2;
+    contentTitle.textContent = "Today Tasks";
 
     var todayTasks = [];
     var todayDate = new Date();
@@ -45,6 +49,7 @@ function displayTodayTasks () {
 // Displays all tasks for this week
 function displayThisWeekTasks () {
     displayMode = 1;
+    contentTitle.textContent = "Current Week Tasks";
 
     var todayDate = new Date();
 
@@ -71,6 +76,7 @@ function displayThisWeekTasks () {
 // Displays all tasks
 function displayAllTasks () {
     displayMode = 0;
+    contentTitle.textContent = "All Tasks";
 
     for(let i = 0; i < allTasks.length; i++) {
         displayTask(allTasks[i]);
@@ -308,18 +314,34 @@ async function deleteTask(task) {
 function displayDialog(title) {
     return new Promise((resolve) => {
         const newDial = document.createElement("dialog");
+        newDial.style.display = "flex";
+        newDial.style.flexDirection = "column";
+        newDial.style.alignItems = "center";
+        newDial.style.padding = "10px";
+        newDial.style.border = "none";
+        newDial.style.width = "max-content";
 
         const dialTitle = document.createElement("div");
         dialTitle.textContent = title;
+        dialTitle.style.fontSize = "x-large";
+        dialTitle.style.marginBottom = "10px";
         newDial.appendChild(dialTitle);
 
+        const buttonsDiv = document.createElement("div");
+
         const closeBtn = document.createElement("button");
+        closeBtn.className = "button-rounded";
+        closeBtn.style.backgroundColor = "red";
         closeBtn.textContent = "No";
-        newDial.appendChild(closeBtn);
+        closeBtn.style.fontSize = "x-large";
+        closeBtn.style.marginRight = "20px";
+        buttonsDiv.appendChild(closeBtn);
 
         const confirmBtn = document.createElement("button");
+        confirmBtn.className = "button-rounded";
         confirmBtn.textContent = "Yes"
-        newDial.appendChild(confirmBtn);
+        confirmBtn.style.fontSize = "x-large";
+        buttonsDiv.appendChild(confirmBtn);
 
         closeBtn.addEventListener('click', () => {
             newDial.close();
@@ -333,6 +355,8 @@ function displayDialog(title) {
             resolve("Yes");
         });
 
+        newDial.appendChild(buttonsDiv);
+
         content.appendChild(newDial);
         newDial.showModal();
     });
@@ -340,42 +364,52 @@ function displayDialog(title) {
 
 // Display the given task
 function displayTask(task) {
-    const newDiv = document.createElement("div");
 
+    const newDiv = document.createElement("div");
     newDiv.style.borderRadius = "8px";
-    newDiv.style.height = "30px";
+    newDiv.style.height = "max-content";
     newDiv.style.width = "max-content";
-    newDiv.style.border = "solid";
-    newDiv.style.padding = "10px";
+    newDiv.style.maxWidth = "400px";
+    newDiv.style.padding = "20px";
     newDiv.style.display = "flex";
-    newDiv.style.flexDirection = "row";
+    newDiv.style.flexDirection = "column";
     newDiv.style.alignItems = "center";
     newDiv.style.justifyContent = "center";
-    newDiv.style.backgroundColor = "white";
+    newDiv.style.backgroundColor = "#F5D6BA";
+
+    const firstRow = document.createElement("div");
+    firstRow.style.display = "flex";
+    firstRow.style.width = "100%";
+    firstRow.style.justifyContent = "space-between";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-
-    newDiv.appendChild(checkbox);
+    checkbox.style.height = "20px";
+    checkbox.style.width = "20px";
+    checkbox.style.marginRight = "10px";
+    firstRow.appendChild(checkbox);
 
     const titleDiv = document.createElement("div");
     titleDiv.textContent = task.title;
-    titleDiv.style.backgroundColor = "white";
-    titleDiv.style.padding = "5px";
-    titleDiv.style.borderRadius = "8px";
     titleDiv.style.fontWeight = "bold";
-    titleDiv.style.marginRight = "5px"
+    titleDiv.style.marginRight = "10px"
     titleDiv.style.cursor = "pointer";
+    titleDiv.style.userSelect = "none";
+    firstRow.appendChild(titleDiv);
 
-    newDiv.appendChild(titleDiv);
+    const buttonsDiv = document.createElement("div");
+    buttonsDiv.style.display = "flex";
+    buttonsDiv.style.flexDirection = "row";
 
     const editDiv = document.createElement("button");
     editDiv.className = "fa fa-pencil-square-o taskButtons";
-
-    newDiv.appendChild(editDiv);
+    buttonsDiv.appendChild(editDiv);
 
     const deleteDiv = document.createElement("button");
     deleteDiv.className = "fa fa-times taskButtons";
+    buttonsDiv.appendChild(deleteDiv);
+
+    firstRow.appendChild(buttonsDiv);
 
     deleteDiv.addEventListener('click', () => {
         deleteTask(task);
@@ -385,7 +419,44 @@ function displayTask(task) {
         editTaskDialog(task);
     });
 
-    newDiv.appendChild(deleteDiv);
+    titleDiv.addEventListener('click', () => {
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change'));
+    });
+
+    // Change task style depending on checkbox state
+    checkbox.addEventListener('change', () => {
+        if (checkbox.checked) {
+            titleDiv.style.textDecoration = "line-through";
+            newDiv.style.backgroundColor = "lightgreen";
+            titleDiv.style.backgroundColor = "inherit";
+        }
+        else {
+            titleDiv.style.textDecoration = "none";
+            newDiv.style.backgroundColor = "#F5D6BA";
+        }
+    });    
+
+    newDiv.appendChild(firstRow);
+
+    const descriptionDiv = document.createElement("div");
+    descriptionDiv.style.marginTop = "20px";
+    descriptionDiv.textContent = task.description;
+    descriptionDiv.style.textWrap = "wrap";
+    newDiv.appendChild(descriptionDiv);
+
+    const dueDateDiv = document.createElement("div");
+    dueDateDiv.style.border = "1px solid black";
+    dueDateDiv.style.padding = "5px";
+    dueDateDiv.style.color = "white";
+    dueDateDiv.style.backgroundColor = "black";
+    dueDateDiv.style.borderRadius = "15px";
+    dueDateDiv.style.fontWeight = "bold";
+    dueDateDiv.style.userSelect = "none";
+    const month = new Date(task.dueDate);
+    dueDateDiv.style.marginTop = "20px";
+    dueDateDiv.textContent = monthsLong[month.getMonth()] + " " + month.getDate() + ", " + month.getFullYear();
+    newDiv.appendChild(dueDateDiv);
 
     content.appendChild(newDiv);
 }
