@@ -1,5 +1,7 @@
 import { Task } from "./task";
 
+//#region Initilzation stuff
+
 const monthsLong = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 var allTasks = [];
@@ -17,12 +19,14 @@ if (localStorage.getItem('allTasks') === null) {
 else {
     var tempTasks = JSON.parse(localStorage.getItem('allTasks'));
     for (let i = 0; i < tempTasks.length; i++) {
-        allTasks[i] = new Task(tempTasks[i].title, tempTasks[i].description, tempTasks[i].dueDate, tempTasks[i].priority, tempTasks[i].completed);
+        allTasks[i] = new Task(tempTasks[i].title, tempTasks[i].description, tempTasks[i].dueDate, tempTasks[i].priority, tempTasks[i].completed, tempTasks[i].expired);
     }
 }
 
 // Shows all tasks on website load
 window.onload = refreshDisplay();
+
+//#endregion
 
 //#region Filtering tasks
 
@@ -88,13 +92,6 @@ function displayAllTasks () {
 
 //#region Task helper functions
 
-// Create a new task and save it into local storage
-function createNewTask(title, description, dueDate, priority) {
-    var newTask = new Task(title, description, dueDate, priority);
-    allTasks[allTasks.length] = newTask;
-    saveAllTasks();
-}
-
 // Saves the given task
 function saveNewTask(task) {
     allTasks[allTasks.length] = task;
@@ -124,6 +121,7 @@ function refreshDisplay() {
     }
 
     sortTasks();
+    allTasksExpiredCheck();
 
     // Update the view depending on which tasks were displayed
     if (displayMode === 0) displayAllTasks();
@@ -212,7 +210,7 @@ function newTaskDialog() {
             alert("Please fill out all the fields with the correct values.");
         }
         else {
-            var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false);
+            var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false);
 
             saveNewTask(tempTask);
             newTaskDial.close();
@@ -340,6 +338,11 @@ function editTaskDialog(task) {
     newTaskDial.showModal();
 }
 
+// Save the current task state to localStorage
+function saveAllTasks() {
+    localStorage.setItem('allTasks', JSON.stringify(allTasks));
+}
+
 // Confirmation dialog for deleting tasks
 function displayDialog(title) {
     return new Promise((resolve) => {
@@ -395,14 +398,10 @@ function displayDialog(title) {
 
         newDial.appendChild(buttonsDiv);
 
-        content.appendChild(newDial);
+        document.body.appendChild(newDial);
         newDial.showModal();
-    });
-}
 
-// Save the current task state to localStorage
-function saveAllTasks() {
-    localStorage.setItem('allTasks', JSON.stringify(allTasks));
+    });
 }
 
 // Delete the given task
@@ -417,6 +416,30 @@ async function deleteTask(task) {
     refreshDisplay();
 
     saveAllTasks();
+}
+
+async function removeExpiredTasks() {
+    const userResponse = await displayDialog("Are you sure?");
+
+    if (userResponse === "No") return;
+
+    // Delete expired tasks
+    allTasks = allTasks.filter(task => !task.expired || task.completed);
+
+    saveAllTasks();
+    refreshDisplay();
+}
+
+async function removeCompletedTasks() {
+    const userResponse = await displayDialog("Are you sure?");
+
+    if (userResponse === "No") return;
+
+    // Delete completed tasks
+    allTasks = allTasks.filter(task => !task.completed);
+
+    saveAllTasks();
+    refreshDisplay();
 }
 
 // Display the given task
@@ -537,14 +560,8 @@ function displayTask(task) {
         else if (taskDueDate.getDate() === (todayDate.getDate() + 1) && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
             dueDateDiv.textContent = "Tomorrow";
         }
-        else if (taskDueDate.getFullYear() < todayDate.getFullYear())
+        else if (isExpired(task))
         {
-            dueDateDiv.textContent = "Expired";
-        }
-        else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() < todayDate.getMonth()) {
-            dueDateDiv.textContent = "Expired";
-        }
-        else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() == todayDate.getMonth() && taskDueDate.getDate() < todayDate.getDate()) {
             dueDateDiv.textContent = "Expired";
         }
         else {
@@ -555,6 +572,57 @@ function displayTask(task) {
     newDiv.appendChild(dueDateDiv);
 
     content.appendChild(newDiv);
+}
+
+//#endregion
+
+//#region Remove Buttons
+
+const removeExpired = document.getElementById("removeExpired");
+const removeCompleted = document.getElementById("removeCompleted");
+
+removeExpired.addEventListener('click', () => {
+    document.getElementById("sidenav").style.width = "0px";
+    removeExpiredTasks();
+});
+
+removeCompleted.addEventListener('click', () => {   
+    document.getElementById("sidenav").style.width = "0px";
+    removeCompletedTasks();
+});
+
+//#endregion
+
+//#region Expired Tasks Helper Functions
+
+function isExpired(task) {
+    const taskDueDate = new Date(task.dueDate);
+    const todayDate = new Date();
+
+    if (taskDueDate.getFullYear() < todayDate.getFullYear())
+    {
+        return true;
+    }
+    else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() < todayDate.getMonth()) 
+    {
+        return true;
+    }
+    else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() == todayDate.getMonth() && taskDueDate.getDate() < todayDate.getDate()) 
+    {
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+function allTasksExpiredCheck() {
+    for (let i = 0; i < allTasks.length; i++) {
+        if (isExpired(allTasks[i]))
+        {
+            allTasks[i].expired = true;
+        }
+    }
 }
 
 //#endregion
