@@ -198,6 +198,13 @@ function newTaskDialog() {
         newTaskDial.remove();
     });
 
+    document.addEventListener('keydown', (event) => {
+        if (event.key == 'Escape') {
+            newTaskDial.close();
+            newTaskDial.remove();
+        }
+    })
+
     confirmBtn.addEventListener('click', () => {
 
         // Check if all fields are filled
@@ -296,6 +303,13 @@ function editTaskDialog(task) {
         newTaskDial.remove();
     });
 
+    document.addEventListener('keydown', (event) => {
+        if (event.key == 'Escape') {
+            newTaskDial.close();
+            newTaskDial.remove();
+        }
+    })
+
     confirmBtn.addEventListener('click', () => {
         // Check if all fields are filled
         if (titleInput.value == "" || descInput.value == "" || dueDateInput.value == "" || priorityInput.value == "") {
@@ -324,25 +338,6 @@ function editTaskDialog(task) {
 
     content.appendChild(newTaskDial);
     newTaskDial.showModal();
-}
-
-// Save the current task state to localStorage
-function saveAllTasks() {
-    localStorage.setItem('allTasks', JSON.stringify(allTasks));
-}
-
-// Delete the given task
-async function deleteTask(task) {
-
-    const userRespnose = await displayDialog("Are you sure?");
-
-    if (userRespnose === "No") return;
-
-    allTasks.splice(allTasks.indexOf(task), 1);
-
-    refreshDisplay();
-
-    saveAllTasks();
 }
 
 // Confirmation dialog for deleting tasks
@@ -384,6 +379,14 @@ function displayDialog(title) {
             resolve("No");
         });
 
+        document.addEventListener('keydown', (event) => {
+            if (event.key == 'Escape') {
+                newDial.close();
+                newDial.remove();
+                resolve("No");
+            }
+        })
+
         confirmBtn.addEventListener('click', () => {
             newDial.close();
             newDial.remove();
@@ -395,6 +398,25 @@ function displayDialog(title) {
         content.appendChild(newDial);
         newDial.showModal();
     });
+}
+
+// Save the current task state to localStorage
+function saveAllTasks() {
+    localStorage.setItem('allTasks', JSON.stringify(allTasks));
+}
+
+// Delete the given task
+async function deleteTask(task) {
+
+    const userRespnose = await displayDialog("Are you sure?");
+
+    if (userRespnose === "No") return;
+
+    allTasks.splice(allTasks.indexOf(task), 1);
+
+    refreshDisplay();
+
+    saveAllTasks();
 }
 
 // Display the given task
