@@ -178,6 +178,9 @@ function newTaskDialog() {
 
     const priorityInput = document.createElement("input");
     priorityInput.type = "number";
+    priorityInput.defaultValue = "3";
+    priorityInput.min = "1";
+    priorityInput.max = "3";
     newTaskDial.append(priorityInput);
 
     // Buttons
@@ -211,6 +214,12 @@ function newTaskDialog() {
         }
 
     });
+
+    // Make sure the user can't enter a priority outside of the range 1 to 3
+    priorityInput.addEventListener('change', () => {
+        if (priorityInput.value > 3) priorityInput.value = 3;
+        else if (priorityInput.value < 1) priorityInput.value = 1;
+    })
 
     content.appendChild(newTaskDial);
     newTaskDial.showModal();
@@ -267,6 +276,8 @@ function editTaskDialog(task) {
 
     const priorityInput = document.createElement("input");
     priorityInput.type = "number";
+    priorityInput.min = "1";
+    priorityInput.max = "3";
     priorityInput.value = task.priority;
     newTaskDial.append(priorityInput);
 
@@ -303,6 +314,12 @@ function editTaskDialog(task) {
             refreshDisplay();
         }
     });
+
+    // Make sure the user can't enter a priority outside of the range 1 to 3
+    priorityInput.addEventListener('change', () => {
+        if (priorityInput.value > 3) priorityInput.value = 3;
+        else if (priorityInput.value < 1) priorityInput.value = 1;
+    })
 
     content.appendChild(newTaskDial);
     newTaskDial.showModal();
