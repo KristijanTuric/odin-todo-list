@@ -17,7 +17,7 @@ if (localStorage.getItem('allTasks') === null) {
 else {
     var tempTasks = JSON.parse(localStorage.getItem('allTasks'));
     for (let i = 0; i < tempTasks.length; i++) {
-        allTasks[i] = new Task(tempTasks[i].title, tempTasks[i].description, tempTasks[i].dueDate, tempTasks[i].priority);
+        allTasks[i] = new Task(tempTasks[i].title, tempTasks[i].description, tempTasks[i].dueDate, tempTasks[i].priority, tempTasks[i].completed);
     }
 }
 
@@ -212,7 +212,7 @@ function newTaskDialog() {
             alert("Please fill out all the fields with the correct values.");
         }
         else {
-            var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value);
+            var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false);
 
             saveNewTask(tempTask);
             newTaskDial.close();
@@ -487,10 +487,16 @@ function displayTask(task) {
             titleDiv.style.textDecoration = "line-through";
             newDiv.style.backgroundColor = "lightgreen";
             titleDiv.style.backgroundColor = "inherit";
+            task.completed = true;
+            saveAllTasks();
+            refreshDisplay();
         }
         else {
             titleDiv.style.textDecoration = "none";
             newDiv.style.backgroundColor = "#F6EFA6";
+            task.completed = false;
+            saveAllTasks();
+            refreshDisplay();
         }
     });    
 
@@ -516,26 +522,36 @@ function displayTask(task) {
     const todayDate = new Date();
 
     // Set the status of the task
-    if (taskDueDate.getDate() === todayDate.getDate() && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
-        dueDateDiv.textContent = "Today";
-    }
-    else if (taskDueDate.getDate() === (todayDate.getDate() + 1) && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
-        dueDateDiv.textContent = "Tomorrow";
-    }
-    else if (taskDueDate.getFullYear() < todayDate.getFullYear())
-    {
-        dueDateDiv.textContent = "Expired";
-    }
-    else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() < todayDate.getMonth()) {
-        dueDateDiv.textContent = "Expired";
-    }
-    else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() == todayDate.getMonth() && taskDueDate.getDate() < todayDate.getDate()) {
-        dueDateDiv.textContent = "Expired";
+
+    if (task.completed){
+        dueDateDiv.textContent = "Completed";
+        checkbox.checked = true;
+        titleDiv.style.textDecoration = "line-through";
+        newDiv.style.backgroundColor = "lightgreen";
+        titleDiv.style.backgroundColor = "inherit";
     }
     else {
-        dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
+        if (taskDueDate.getDate() === todayDate.getDate() && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
+            dueDateDiv.textContent = "Today";
+        }
+        else if (taskDueDate.getDate() === (todayDate.getDate() + 1) && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
+            dueDateDiv.textContent = "Tomorrow";
+        }
+        else if (taskDueDate.getFullYear() < todayDate.getFullYear())
+        {
+            dueDateDiv.textContent = "Expired";
+        }
+        else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() < todayDate.getMonth()) {
+            dueDateDiv.textContent = "Expired";
+        }
+        else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() == todayDate.getMonth() && taskDueDate.getDate() < todayDate.getDate()) {
+            dueDateDiv.textContent = "Expired";
+        }
+        else {
+            dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
+        }    
     }
-
+    
     newDiv.appendChild(dueDateDiv);
 
     content.appendChild(newDiv);
