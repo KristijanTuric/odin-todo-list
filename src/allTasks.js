@@ -8,6 +8,7 @@ var displayMode = 0;
 // Get the main content element
 const content = document.getElementById("content");
 const contentTitle = document.getElementById("contentTitle");
+contentTitle.style.fontSize = "28px";
 
 // Check if any tasks exist
 if (localStorage.getItem('allTasks') === null) {
