@@ -45,6 +45,10 @@ nav > div > img:hover {
     cursor: pointer;
 }
 
+#profile {
+    margin-right: 10px;
+}
+
 /* Side Nav Panel */
 .sidenav {
     height: 100%;
