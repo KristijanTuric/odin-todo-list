@@ -24,7 +24,7 @@ newTaskButton.addEventListener('click', () => {
 
 //#endregion
 
-//#region Display different tasks
+//#region Display tasks
 
 const content = document.getElementById("content");
 

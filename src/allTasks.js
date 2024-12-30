@@ -100,13 +100,30 @@ function saveNewTask(task) {
     saveAllTasks();
 }
 
+// Sort the current task array by dueDate
+function sortTasks() {
+    for (var i = 0; i < allTasks.length; i++) {
+        for (var j = i+1; j < allTasks.length; j++) {
+            var firstDate = new Date(allTasks[i].dueDate);
+            var secondDate = new Date(allTasks[j].dueDate);
+            if (secondDate < firstDate) {
+                var temp = allTasks[i];
+                allTasks[i] = allTasks[j];
+                allTasks[j] = temp;
+            }
+        }
+    }
+}
+
 // Clears the view and displays the tasks accordingly
 function refreshDisplay() {
     // Clear the view
     while (content.hasChildNodes()) {
         content.removeChild(content.lastChild);
     }
-            
+
+    sortTasks();
+
     // Update the view depending on which tasks were displayed
     if (displayMode === 0) displayAllTasks();
     else if (displayMode === 1) displayThisWeekTasks();
@@ -375,7 +392,7 @@ function displayTask(task) {
     newDiv.style.flexDirection = "column";
     newDiv.style.alignItems = "center";
     newDiv.style.justifyContent = "center";
-    newDiv.style.backgroundColor = "#F5D6BA";
+    newDiv.style.backgroundColor = "#F6EFA6";
 
     const firstRow = document.createElement("div");
     firstRow.style.display = "flex";
@@ -433,7 +450,7 @@ function displayTask(task) {
         }
         else {
             titleDiv.style.textDecoration = "none";
-            newDiv.style.backgroundColor = "#F5D6BA";
+            newDiv.style.backgroundColor = "#F6EFA6";
         }
     });    
 
@@ -453,9 +470,32 @@ function displayTask(task) {
     dueDateDiv.style.borderRadius = "15px";
     dueDateDiv.style.fontWeight = "bold";
     dueDateDiv.style.userSelect = "none";
-    const month = new Date(task.dueDate);
     dueDateDiv.style.marginTop = "20px";
-    dueDateDiv.textContent = monthsLong[month.getMonth()] + " " + month.getDate() + ", " + month.getFullYear();
+
+    const taskDueDate = new Date(task.dueDate);
+    const todayDate = new Date();
+
+    // Set the status of the task
+    if (taskDueDate.getDate() === todayDate.getDate() && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
+        dueDateDiv.textContent = "Today";
+    }
+    else if (taskDueDate.getDate() === (todayDate.getDate() + 1) && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
+        dueDateDiv.textContent = "Tomorrow";
+    }
+    else if (taskDueDate.getFullYear() < todayDate.getFullYear())
+    {
+        dueDateDiv.textContent = "Expired";
+    }
+    else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() < todayDate.getMonth()) {
+        dueDateDiv.textContent = "Expired";
+    }
+    else if (taskDueDate.getFullYear() == todayDate.getFullYear() && taskDueDate.getMonth() == todayDate.getMonth() && taskDueDate.getDate() < todayDate.getDate()) {
+        dueDateDiv.textContent = "Expired";
+    }
+    else {
+        dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
+    }
+
     newDiv.appendChild(dueDateDiv);
 
     content.appendChild(newDiv);
