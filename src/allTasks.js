@@ -455,50 +455,81 @@ async function removeCompletedTasks() {
 function displayTask(task) {
 
     const newDiv = document.createElement("div");
-    newDiv.style.borderRadius = "8px";
-    newDiv.style.height = "max-content";
-    newDiv.style.width = "max-content";
-    newDiv.style.maxWidth = "400px";
-    newDiv.style.padding = "20px";
-    newDiv.style.display = "flex";
-    newDiv.style.flexDirection = "column";
-    newDiv.style.alignItems = "center";
-    newDiv.style.justifyContent = "center";
-    newDiv.style.backgroundColor = "#F6EFA6";
+    newDiv.className = "task-card";
 
-    const firstRow = document.createElement("div");
-    firstRow.style.display = "flex";
-    firstRow.style.width = "100%";
-    firstRow.style.justifyContent = "space-between";
+    const taskHeader = document.createElement("div");
+    taskHeader.className = "task-header";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.style.height = "20px";
-    checkbox.style.width = "20px";
-    checkbox.style.marginRight = "10px";
-    firstRow.appendChild(checkbox);
+    checkbox.className = "task-checkbox";
+    taskHeader.appendChild(checkbox);
 
-    const titleDiv = document.createElement("div");
+    const titleStatusDiv = document.createElement("div");
+    titleStatusDiv.className = "task-title-status";
+
+    const titleDiv = document.createElement("h3");
     titleDiv.textContent = task.title;
-    titleDiv.style.fontWeight = "bold";
-    titleDiv.style.marginRight = "10px"
-    titleDiv.style.cursor = "pointer";
-    titleDiv.style.userSelect = "none";
-    firstRow.appendChild(titleDiv);
+    titleDiv.className = "task-title";
+    titleStatusDiv.appendChild(titleDiv);
+
+    const statusDiv = document.createElement("span");
+    statusDiv.textContent = "Test";
+    statusDiv.className = "task-status";
+    titleStatusDiv.appendChild(statusDiv);
+
+    taskHeader.appendChild(titleStatusDiv);
 
     const buttonsDiv = document.createElement("div");
-    buttonsDiv.style.display = "flex";
-    buttonsDiv.style.flexDirection = "row";
+    buttonsDiv.className = "task-buttons";
 
     const editDiv = document.createElement("button");
-    editDiv.className = "fa fa-pencil-square-o taskButtons";
+    editDiv.className = "fa fa-pencil-square-o taskButtons edit-btn";
     buttonsDiv.appendChild(editDiv);
 
     const deleteDiv = document.createElement("button");
-    deleteDiv.className = "fa fa-times taskButtons";
+    deleteDiv.className = "fa fa-times taskButtons delete-btn";
     buttonsDiv.appendChild(deleteDiv);
 
-    firstRow.appendChild(buttonsDiv);
+    taskHeader.appendChild(buttonsDiv);
+
+    newDiv.appendChild(taskHeader);
+
+    const descriptionDiv = document.createElement("div");
+    descriptionDiv.textContent = task.description;
+    descriptionDiv.className = "task-description";
+    newDiv.appendChild(descriptionDiv);
+
+    const dueDateDiv = document.createElement("div");
+    dueDateDiv.className = "task-due-date";
+
+    const taskDueDate = new Date(task.dueDate);
+    const todayDate = new Date();
+
+    // Set the status of the task
+
+    if (task.completed){
+        dueDateDiv.textContent = "Completed";
+        checkbox.checked = true;
+        titleDiv.style.textDecoration = "line-through";
+        newDiv.style.backgroundColor = "lightgreen";
+        titleDiv.style.backgroundColor = "inherit";
+    }
+    else {
+        if (taskDueDate.getDate() === todayDate.getDate() && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
+            dueDateDiv.textContent = "Today";
+        }
+        else if (taskDueDate.getDate() === (todayDate.getDate() + 1) && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
+            dueDateDiv.textContent = "Tomorrow";
+        }
+        else if (isExpired(task))
+        {
+            dueDateDiv.textContent = "Expired";
+        }
+        else {
+            dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
+        }    
+    }
 
     deleteDiv.addEventListener('click', () => {
         deleteTask(task);
@@ -531,52 +562,6 @@ function displayTask(task) {
             refreshDisplay();
         }
     });    
-
-    newDiv.appendChild(firstRow);
-
-    const descriptionDiv = document.createElement("div");
-    descriptionDiv.style.marginTop = "20px";
-    descriptionDiv.textContent = task.description;
-    descriptionDiv.style.textWrap = "wrap";
-    newDiv.appendChild(descriptionDiv);
-
-    const dueDateDiv = document.createElement("div");
-    dueDateDiv.style.border = "1px solid black";
-    dueDateDiv.style.padding = "5px";
-    dueDateDiv.style.color = "white";
-    dueDateDiv.style.backgroundColor = "black";
-    dueDateDiv.style.borderRadius = "15px";
-    dueDateDiv.style.fontWeight = "bold";
-    dueDateDiv.style.userSelect = "none";
-    dueDateDiv.style.marginTop = "20px";
-
-    const taskDueDate = new Date(task.dueDate);
-    const todayDate = new Date();
-
-    // Set the status of the task
-
-    if (task.completed){
-        dueDateDiv.textContent = "Completed";
-        checkbox.checked = true;
-        titleDiv.style.textDecoration = "line-through";
-        newDiv.style.backgroundColor = "lightgreen";
-        titleDiv.style.backgroundColor = "inherit";
-    }
-    else {
-        if (taskDueDate.getDate() === todayDate.getDate() && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
-            dueDateDiv.textContent = "Today";
-        }
-        else if (taskDueDate.getDate() === (todayDate.getDate() + 1) && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
-            dueDateDiv.textContent = "Tomorrow";
-        }
-        else if (isExpired(task))
-        {
-            dueDateDiv.textContent = "Expired";
-        }
-        else {
-            dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
-        }    
-    }
     
     newDiv.appendChild(dueDateDiv);
 
