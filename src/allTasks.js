@@ -132,13 +132,13 @@ function refreshDisplay() {
 // New task dialog
 function newTaskDialog() {
     const newTaskDial = document.createElement("dialog");
-
-    newTaskDial.style.width = "20vw";
-    newTaskDial.style.display = "flex";
-    newTaskDial.style.flexDirection = "column";
+    newTaskDial.className = "new-task-dialog";
 
     const dialogTitle = document.createElement("div");
     dialogTitle.textContent = "New Task";
+    dialogTitle.style.fontSize = "larger";
+    dialogTitle.style.fontWeight = "bold";
+    dialogTitle.style.marginBottom = "10px";
     newTaskDial.append(dialogTitle);    
 
     // Title
@@ -148,6 +148,8 @@ function newTaskDialog() {
 
     const titleInput = document.createElement("input");
     titleInput.type = "text";
+    titleInput.placeholder = "Clean my room";
+    titleInput.style.marginBottom = "8px";
     newTaskDial.append(titleInput);
 
     // Description
@@ -157,6 +159,8 @@ function newTaskDialog() {
 
     const descInput = document.createElement("input");
     descInput.type = "text";
+    descInput.placeholder = "Don't forget to open the window";
+    descInput.style.marginBottom = "8px";
     newTaskDial.append(descInput);
 
     // Due Date
@@ -168,6 +172,7 @@ function newTaskDialog() {
     dueDateInput.type = "date";
     var tempToday = new Date();
     dueDateInput.min = tempToday.getFullYear() + "-" + (tempToday.getMonth() + 1).toString() + "-" + tempToday.getDate();
+    dueDateInput.style.marginBottom = "8px";
     newTaskDial.append(dueDateInput);
     
     // Priority
@@ -180,16 +185,25 @@ function newTaskDialog() {
     priorityInput.defaultValue = "3";
     priorityInput.min = "1";
     priorityInput.max = "3";
+    priorityInput.style.marginBottom = "8px";
     newTaskDial.append(priorityInput);
+
+    const buttonDiv = document.createElement("div");
+    buttonDiv.className = "button-group";
+
 
     // Buttons
     const closeBtn = document.createElement("button");
     closeBtn.textContent = "Cancel";
-    newTaskDial.appendChild(closeBtn);
+    closeBtn.className = "cancel-btn";
+    buttonDiv.appendChild(closeBtn);
 
     const confirmBtn = document.createElement("button");
     confirmBtn.textContent = "Add Task"
-    newTaskDial.appendChild(confirmBtn);
+    confirmBtn.className = "save-btn";
+    buttonDiv.appendChild(confirmBtn);
+
+    newTaskDial.appendChild(buttonDiv);
 
     closeBtn.addEventListener('click', () => {
         newTaskDial.close();
@@ -233,78 +247,83 @@ function newTaskDialog() {
 
 // Edit task dialog
 function editTaskDialog(task) {
-    const newTaskDial = document.createElement("dialog");
+    const editTaskDial = document.createElement("dialog");
+    editTaskDial.className = "new-task-dialog";
 
-    newTaskDial.style.width = "20vw";
-    newTaskDial.style.display = "flex";
-    newTaskDial.style.flexDirection = "column";
 
     const dialogTitle = document.createElement("div");
     dialogTitle.textContent = "Edit Task";
-    newTaskDial.append(dialogTitle);    
+    editTaskDial.append(dialogTitle);    
 
     // Title
     const titleLbl = document.createElement("label");
     titleLbl.textContent = "Title";
-    newTaskDial.append(titleLbl);
+    editTaskDial.append(titleLbl);
 
     const titleInput = document.createElement("input");
     titleInput.type = "text";
     titleInput.value = task.title;
-    newTaskDial.append(titleInput);
+    editTaskDial.append(titleInput);
 
     // Description
     const descLbl = document.createElement("label");
     descLbl.textContent = "Description";
-    newTaskDial.append(descLbl);
+    editTaskDial.append(descLbl);
 
     const descInput = document.createElement("input");
     descInput.type = "text";
     descInput.value = task.description;
-    newTaskDial.append(descInput);
+    editTaskDial.append(descInput);
 
     // Due Date
     const dueDateLbl = document.createElement("label");
     dueDateLbl.textContent = "Due Date";
-    newTaskDial.append(dueDateLbl);
+    editTaskDial.append(dueDateLbl);
 
     const dueDateInput = document.createElement("input");
     dueDateInput.type = "date";
     dueDateInput.value = task.dueDate;
     var tempToday = new Date();
     dueDateInput.min = tempToday.getFullYear() + "-" + (tempToday.getMonth() + 1).toString() + "-" + tempToday.getDate();
-    newTaskDial.append(dueDateInput);
+    editTaskDial.append(dueDateInput);
     
     // Priority
     const priorityLbl = document.createElement("label");
     priorityLbl.textContent = "Priority";
-    newTaskDial.append(priorityLbl);
+    editTaskDial.append(priorityLbl);
 
     const priorityInput = document.createElement("input");
     priorityInput.type = "number";
     priorityInput.min = "1";
     priorityInput.max = "3";
     priorityInput.value = task.priority;
-    newTaskDial.append(priorityInput);
+    editTaskDial.append(priorityInput);
 
     // Buttons
+    const buttonDiv = document.createElement("div");
+    buttonDiv.className = "button-group";
+
     const closeBtn = document.createElement("button");
     closeBtn.textContent = "Cancel";
-    newTaskDial.appendChild(closeBtn);
+    closeBtn.className = "cancel-btn";
+    buttonDiv.appendChild(closeBtn);
 
     const confirmBtn = document.createElement("button");
+    confirmBtn.className = "save-btn";
     confirmBtn.textContent = "Save"
-    newTaskDial.appendChild(confirmBtn);
+    buttonDiv.appendChild(confirmBtn);
+
+    editTaskDial.appendChild(buttonDiv);
 
     closeBtn.addEventListener('click', () => {
-        newTaskDial.close();
-        newTaskDial.remove();
+        editTaskDial.close();
+        editTaskDial.remove();
     });
 
     document.addEventListener('keydown', (event) => {
         if (event.key == 'Escape') {
-            newTaskDial.close();
-            newTaskDial.remove();
+            editTaskDial.close();
+            editTaskDial.remove();
         }
     })
 
@@ -321,8 +340,8 @@ function editTaskDialog(task) {
 
             saveAllTasks();
 
-            newTaskDial.close();
-            newTaskDial.remove();
+            editTaskDial.close();
+            editTaskDial.remove();
 
             refreshDisplay();
         }
@@ -334,8 +353,8 @@ function editTaskDialog(task) {
         else if (priorityInput.value < 1) priorityInput.value = 1;
     })
 
-    content.appendChild(newTaskDial);
-    newTaskDial.showModal();
+    content.appendChild(editTaskDial);
+    editTaskDial.showModal();
 }
 
 // Save the current task state to localStorage
@@ -347,33 +366,23 @@ function saveAllTasks() {
 function displayDialog(title) {
     return new Promise((resolve) => {
         const newDial = document.createElement("dialog");
-        newDial.style.display = "flex";
-        newDial.style.flexDirection = "column";
-        newDial.style.alignItems = "center";
-        newDial.style.padding = "10px";
-        newDial.style.border = "none";
-        newDial.style.width = "max-content";
+        newDial.className = "confirm-dialog";
 
-        const dialTitle = document.createElement("div");
+        const dialTitle = document.createElement("h2");
         dialTitle.textContent = title;
-        dialTitle.style.fontSize = "x-large";
-        dialTitle.style.marginBottom = "10px";
         newDial.appendChild(dialTitle);
 
         const buttonsDiv = document.createElement("div");
+        buttonsDiv.className = "button-group";
 
         const closeBtn = document.createElement("button");
-        closeBtn.className = "button-rounded";
-        closeBtn.style.backgroundColor = "red";
         closeBtn.textContent = "No";
-        closeBtn.style.fontSize = "x-large";
-        closeBtn.style.marginRight = "20px";
+        closeBtn.className = "no-btn";
         buttonsDiv.appendChild(closeBtn);
 
         const confirmBtn = document.createElement("button");
-        confirmBtn.className = "button-rounded";
         confirmBtn.textContent = "Yes"
-        confirmBtn.style.fontSize = "x-large";
+        confirmBtn.className = "yes-btn";
         buttonsDiv.appendChild(confirmBtn);
 
         closeBtn.addEventListener('click', () => {
