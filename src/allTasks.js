@@ -474,7 +474,7 @@ function displayTask(task) {
     titleStatusDiv.appendChild(titleDiv);
 
     const statusDiv = document.createElement("span");
-    statusDiv.textContent = "Test";
+    statusDiv.textContent = "In-progress";
     statusDiv.className = "task-status";
     titleStatusDiv.appendChild(statusDiv);
 
@@ -509,11 +509,13 @@ function displayTask(task) {
     // Set the status of the task
 
     if (task.completed){
-        dueDateDiv.textContent = "Completed";
+        statusDiv.textContent = "Completed";
+        dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
         checkbox.checked = true;
         titleDiv.style.textDecoration = "line-through";
-        newDiv.style.backgroundColor = "lightgreen";
         titleDiv.style.backgroundColor = "inherit";
+        newDiv.classList.add("task-status-completed");
+
     }
     else {
         if (taskDueDate.getDate() === todayDate.getDate() && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
@@ -524,7 +526,8 @@ function displayTask(task) {
         }
         else if (isExpired(task))
         {
-            dueDateDiv.textContent = "Expired";
+            statusDiv.textContent = "Expired";
+            dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
         }
         else {
             dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
