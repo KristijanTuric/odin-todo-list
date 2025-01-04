@@ -10,12 +10,14 @@
 /* Navigation */
 nav {
     height: 8vh;
-    border-bottom: 1px solid lightgray;
-    box-shadow: 0 4px 2px -2px lightgray;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
 nav > div {
@@ -49,8 +51,11 @@ nav > div {
 }
 
 #navTitle {
-    font-size: xx-large;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
     margin-left: 20px;
+    user-select: none;
 }
 
 nav > div > img {
@@ -79,34 +84,35 @@ nav > div > img:hover {
     background-color: #111;
     overflow-x: hidden;
     text-wrap: nowrap;
-    transition: 0.5s;
+    transition: width 0.5s ease;
     padding-top: 60px;
     padding-left: 10px;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+    user-select: none;
 }
 
 .sideNavSection {
     color: #818181;
     font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
 
 .sidenav a {
-    padding: 8px 8px 8px 32px;
+    padding: 8px 32px;
     text-decoration: none;
     font-size: 25px;
     color: #818181;
     display: block;
-    transition: 0.3s;
+    transition: color 0.3s ease, transform 0.2s ease, background-color 0.3s ease;
+    cursor: pointer;
 }
 
 .sidenav a:hover {
     color: #f1f1f1;
+    transform: scale(1.05);
 }
 
 .sidenav .closeSideNav {
@@ -120,35 +126,44 @@ nav > div > img:hover {
 #openSideNav {
     font-size: 35px;
     margin-left: 20px;
-    margin-right: auto;
+    cursor: pointer;
+    transition: color 0.3s ease;
 }
 
 #openSideNav:hover {
-    cursor: pointer;
-    color: darkgray;
-}
-
-#allButton:hover {
-    cursor: pointer;
     color: darkgray;
 }
 
 #removeButtons {
-
     display: flex;
     flex-direction: column;
     margin-top: auto;
     text-align: center;
 }
 
+#removeButtons a {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto;
+    text-align: center;
+    
+    background-color: #ff4d4d;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#removeButtons a:hover {
+    background-color: #ff6666;
+    transform: scale(1.05);
+}
+
+
 #removeExpired, #removeCompleted {
     display: inline-block;
     font-size: medium;
     margin: 10px auto;
     padding: 8px 16px;
-    background-color: darkred;
-    border: 1px solid #ccc;
-    border-radius: 5px;
 }
 
 /* Content */
