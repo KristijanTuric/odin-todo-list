@@ -520,17 +520,21 @@ function displayTask(task) {
     else {
         if (taskDueDate.getDate() === todayDate.getDate() && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
             dueDateDiv.textContent = "Today";
+            newDiv.classList.add("task-status-today");
         }
         else if (taskDueDate.getDate() === (todayDate.getDate() + 1) && taskDueDate.getMonth() === todayDate.getMonth() && taskDueDate.getFullYear() === todayDate.getFullYear()) {
             dueDateDiv.textContent = "Tomorrow";
+            newDiv.classList.add("task-status-upcoming");
         }
         else if (isExpired(task))
         {
             statusDiv.textContent = "Expired";
+            newDiv.classList.add("task-status-expired");
             dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
         }
         else {
             dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
+            newDiv.classList.add("task-status-upcoming");
         }    
     }
 
