@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title>To Do List</title>
+<link rel="icon" href="favicon.ico"><script defer src="main.js"></script></head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div id="navTitle">Welcome, User</div>
+        <div id="profile">
+            <button id="newTaskButton">New Task</button>
+            <img src="8361eda264116cdb2f42.png" id="navProfile"></img>
+        </div>
+    </nav>
+
+    <!-- Side Nav -->
+    <div id="sidenav" class="sidenav">
+        <a href="javascript:void(0)" id="closeSideNav" class="closeSideNav">&times;</a>
+        <a href="#" id="allButton">All tasks</a>
+        <a href="#" id="todayButton">Today</a>
+        <a href="#" id="weekButton">This week</a>
+        <div id="projectsnav" class="sideNavSection">Projects
+            <a href="#" id="addProjectBtn">+</a>
+        </div>
+        <div id="removeButtons">
+            <a href="#" id="removeExpired">Remove Expired</a>
+            <a href="#" id="removeCompleted">Remove Completed</a>
+        </div>
+    </div>
+
+    <div id="contentTop">
+        <!-- Open Side Nav Button -->
+        <span id="openSideNav">&#9776;</span>
+        <div id="contentTitle"></div>
+    </div>
+
+    <div id="content"></div>
+
+    <!-- Footer -->
+    <footer>
+        <div>Made by Kristijan</div>
+        <img src="8e2a9e7d53fa4340a09e.png" id="footerIcon"></img>
+    </footer>
+</body>
+</html>
