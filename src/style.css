@@ -96,18 +96,20 @@ nav > div > img:hover {
 .sideNavSection {
     color: #818181;
     font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .sidenav a {
     padding: 8px 32px;
     text-decoration: none;
-    font-size: 25px;
+    font-size: 20px;
     color: #818181;
     display: block;
     transition: color 0.3s ease, transform 0.2s ease, background-color 0.3s ease;
     cursor: pointer;
+    max-width: 280px;
+    padding-right: 10px;
+    text-wrap: wrap;
 }
 
 .sidenav a:hover {
@@ -165,6 +167,7 @@ nav > div > img:hover {
     margin: 10px auto;
     padding: 8px 16px;
 }
+
 
 /* Content */
 #content {
@@ -525,4 +528,77 @@ button:focus {
         flex-direction: column;
         align-items: flex-start;
     }
+}
+
+/* Project */
+
+/* Container for input and buttons */
+.project-input-container {
+    display: flex;
+    flex-direction: column; /* Stack input and buttons vertically */
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 90%; /* Reduced width */
+    max-width: 250px; /* Set a max-width for better control */
+}
+
+/* Input style */
+.project-input-container input {
+    width: 93%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.project-input-container input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Buttons container */
+.project-input-container .button-group {
+    display: flex;
+    width: 100%;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+/* Add and Cancel buttons */
+.project-input-container button {
+    padding: 7px 12px;
+    font-size: 0.9rem; /* Smaller font size */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease;
+    width: 48%; /* Make buttons take up almost full width */
+}
+
+/* Add button */
+.project-input-container .add-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.project-input-container .add-btn:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* Cancel button */
+.project-input-container .cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.project-input-container .cancel-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
 }

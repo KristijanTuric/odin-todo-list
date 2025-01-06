@@ -5,7 +5,7 @@ import { displayAllTasks, displayThisWeekTasks, displayTodayTasks, newTaskDialog
 
 const openSideNav = document.getElementById("openSideNav");
 openSideNav.addEventListener('click', () => {
-    document.getElementById("sidenav").style.width = "250px";
+    document.getElementById("sidenav").style.width = "300px";
 })
 
 const closeSideNav = document.getElementById("closeSideNav");

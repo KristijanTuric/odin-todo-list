@@ -5,6 +5,7 @@ import { Task } from "./task";
 const monthsLong = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 var allTasks = [];
+var allProjects = [];
 var displayMode = 0;
 
 // Get the main content element
@@ -12,19 +13,23 @@ const content = document.getElementById("content");
 const contentTitle = document.getElementById("contentTitle");
 contentTitle.style.fontSize = "28px";
 
-// Check if any tasks exist
-if (localStorage.getItem('allTasks') === null) {
-    var tempTasks = [];
-}
-else {
-    var tempTasks = JSON.parse(localStorage.getItem('allTasks'));
-    for (let i = 0; i < tempTasks.length; i++) {
-        allTasks[i] = new Task(tempTasks[i].title, tempTasks[i].description, tempTasks[i].dueDate, tempTasks[i].priority, tempTasks[i].completed, tempTasks[i].expired);
-    }
-}
+const projectsNav = document.getElementById("projectsnav");
+const addProjectBtn = document.getElementById("addProjectBtn");
 
-// Shows all tasks on website load
-window.onload = refreshDisplay();
+// Check if any tasks exist
+const storedTasks = localStorage.getItem('allTasks');
+allTasks = storedTasks ? JSON.parse(storedTasks).map(task => 
+    new Task(task.title, task.description, task.dueDate, task.priority, task.completed, task.expired, task.project)
+) : [];
+
+// Check if any projects exist
+allProjects = JSON.parse(localStorage.getItem('allProjects')) || [];
+
+// Shows all tasks and projects on website load
+window.onload = function() {
+    refreshDisplay();
+    displayProjects();
+}
 
 //#endregion
 
@@ -46,7 +51,8 @@ function displayTodayTasks () {
     }
 
     for (let j = 0; j < todayTasks.length; j++) {
-        displayTask(todayTasks[j]);
+        if (todayTasks[j].project === "General")
+            displayTask(todayTasks[j]);
     }
 
 }
@@ -74,7 +80,8 @@ function displayThisWeekTasks () {
     }
 
     for (let j = 0; j < weekTasks.length; j++) {
-        displayTask(weekTasks[j]);
+        if (weekTasks[j].project === "General")
+            displayTask(weekTasks[j]);  
     }
 }
 
@@ -84,7 +91,8 @@ function displayAllTasks () {
     contentTitle.textContent = "All Tasks";
 
     for(let i = 0; i < allTasks.length; i++) {
-        displayTask(allTasks[i]);
+        if (allTasks[i].project === "General")
+            displayTask(allTasks[i]);
     }
 }
 
@@ -127,6 +135,18 @@ function refreshDisplay() {
     if (displayMode === 0) displayAllTasks();
     else if (displayMode === 1) displayThisWeekTasks();
     else if (displayMode === 2) displayTodayTasks();
+}
+
+function refreshProjectDisplay(project) {
+    // Clear the view
+    while (content.hasChildNodes()) {
+        content.removeChild(content.lastChild);
+    }
+
+    sortTasks();
+    allTasksExpiredCheck();
+
+    displayProjectTasks(project);
 }
 
 // New task dialog
@@ -224,13 +244,21 @@ function newTaskDialog() {
             alert("Please fill out all the fields with the correct values.");
         }
         else {
-            var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false);
 
-            saveNewTask(tempTask);
+            if (allProjects.includes(contentTitle.textContent)) {
+                var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, contentTitle.textContent);
+                saveNewTask(tempTask);
+                refreshProjectDisplay(contentTitle.textContent);
+
+            } else {
+                var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, "General");
+                saveNewTask(tempTask);
+                refreshDisplay();
+            }
+
+
             newTaskDial.close();
-            newTaskDial.remove();
-
-            refreshDisplay();
+            newTaskDial.remove();           
         }
 
     });
@@ -559,14 +587,22 @@ function displayTask(task) {
             titleDiv.style.backgroundColor = "inherit";
             task.completed = true;
             saveAllTasks();
-            refreshDisplay();
+
+            if (allProjects.includes(contentTitle.textContent))
+                refreshProjectDisplay(contentTitle.textContent);
+            else
+                refreshDisplay();
         }
         else {
             titleDiv.style.textDecoration = "none";
             newDiv.style.backgroundColor = "#F6EFA6";
             task.completed = false;
             saveAllTasks();
-            refreshDisplay();
+
+            if (allProjects.includes(contentTitle.textContent))
+                refreshProjectDisplay(contentTitle.textContent);
+            else
+                refreshDisplay();
         }
     });    
     
@@ -624,6 +660,127 @@ function allTasksExpiredCheck() {
             allTasks[i].expired = true;
         }
     }
+}
+
+//#endregion
+
+//#region Projects
+
+addProjectBtn.addEventListener('click', () => {
+
+    addProjectBtn.remove();
+
+    const newDiv = document.createElement("div");
+    newDiv.className = "project-input-container";
+
+    const projectNameInput = document.createElement("input");
+    projectNameInput.type = "text";
+    projectNameInput.placeholder = "Enter project name...";
+
+    const buttonGroup = document.createElement("div");
+    buttonGroup.className = "button-group";
+
+    const addBtn = document.createElement("button");
+    addBtn.textContent = "Add";
+    addBtn.className = "add-btn";
+
+    const cancelBtn = document.createElement("button");
+    cancelBtn.textContent = "Cancel";
+    cancelBtn.className = "cancel-btn";
+
+    newDiv.appendChild(projectNameInput);
+    buttonGroup.appendChild(addBtn);
+    buttonGroup.appendChild(cancelBtn);
+    newDiv.appendChild(buttonGroup);
+
+    cancelBtn.addEventListener('click', () => {
+        newDiv.remove();
+        displayProjects();
+    });
+
+    addBtn.addEventListener('click', () => {
+        // Validate input, add it to allProjects and refresh the display
+        if (projectNameInput.value != "") {
+            allProjects[allProjects.length] = projectNameInput.value;
+
+            newDiv.remove();
+
+            displayProjects();
+
+            localStorage.setItem('allProjects', JSON.stringify(allProjects));
+        } else {
+            alert("Project name is empty!");
+        }
+    });
+
+    projectsNav.appendChild(newDiv);
+    projectNameInput.focus();
+    
+});
+
+function displayProjects() {
+
+    while (projectsNav.hasChildNodes()) {
+        projectsNav.removeChild(projectsNav.lastChild);
+    }
+
+    projectsNav.textContent = "Projects";
+
+    for (let i = 0; i < allProjects.length; i++) {
+        displayProject(allProjects[i]);
+    }
+
+    projectsNav.appendChild(addProjectBtn);
+}
+
+function displayProject(project) {
+    const projectDiv = document.createElement("div");
+    projectDiv.style.display = "flex";
+
+    const newProject = document.createElement("a");
+    newProject.href = "#";
+    newProject.textContent = project;
+
+    const deleteProjectBtn = document.createElement("a");
+    deleteProjectBtn.textContent = "x";
+
+    projectDiv.appendChild(newProject);
+    projectDiv.appendChild(deleteProjectBtn);
+
+    projectsNav.appendChild(projectDiv);
+
+    deleteProjectBtn.addEventListener('click', () => {
+
+        deleteProject(project);
+        
+    });
+
+    newProject.addEventListener('click', () => {
+        contentTitle.textContent = newProject.textContent;
+
+        // Refresh the screen with tasks that are associated with only this project
+        refreshProjectDisplay(project);
+
+        document.getElementById("sidenav").style.width = "0px";
+    });
+}
+
+function displayProjectTasks(project) {
+    for(let i = 0; i < allTasks.length; i++) {
+        if (allTasks[i].project === project)
+            displayTask(allTasks[i]);
+    }
+}
+
+async function deleteProject(project) {
+    const userRespnose = await displayDialog("Are you sure?");
+
+    if (userRespnose === "No") return;
+
+    allProjects.splice(allProjects.indexOf(project), 1);
+
+    displayProjects();
+    localStorage.setItem('allProjects', JSON.stringify(allProjects));
 }
 
 //#endregion
