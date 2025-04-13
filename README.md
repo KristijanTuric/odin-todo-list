@@ -1,11 +1,18 @@
 # To Do Website by Kristijan for Odin
 
-A demo website with the following functions:
+A demo website with the following functions: 
+[To Do List](https://kristijanturic.github.io/odin-todo-list/)
+
+![Demo Preview](preview.png)
+
+To do:
 
 - [x] Add, Edit & Delete Tasks
 - [x] Filter tasks by Today, Current Week and All Tasks
-- [ ] Filter tasks by Project
+- [x] Filter tasks by Project
 - [ ] Mobile Site Compatibility
-- [ ] Expired tasks are red
-- [ ] Today tasks are orange
-- [ ] Completed tasks are green and crossed out
+- [x] Expired tasks are red
+- [x] Today tasks are orange
+- [x] Completed tasks are green and crossed out
+- [ ] Fix project task refresh after removal
+- [ ] Better task display
