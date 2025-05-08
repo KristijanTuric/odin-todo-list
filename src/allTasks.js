@@ -450,7 +450,11 @@ async function deleteTask(task) {
 
     allTasks.splice(allTasks.indexOf(task), 1);
 
-    refreshDisplay();
+    if (task.project != "General") {
+        refreshProjectDisplay(task.project);
+    } else {
+        refreshDisplay();
+    }
 
     saveAllTasks();
 }
