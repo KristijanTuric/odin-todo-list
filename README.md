@@ -14,5 +14,5 @@ To do:
 - [x] Expired tasks are red
 - [x] Today tasks are orange
 - [x] Completed tasks are green and crossed out
-- [ ] Fix project task refresh after removal
+- [x] Fix project task refresh after removal & Project removal redirect
 - [ ] Better task display
