@@ -785,6 +785,9 @@ async function deleteProject(project) {
 
     displayProjects();
     localStorage.setItem('allProjects', JSON.stringify(allProjects));
+
+    displayMode = 0;
+    refreshDisplay();
 }
 
 //#endregion
