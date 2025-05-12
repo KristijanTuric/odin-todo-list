@@ -15,4 +15,5 @@ To do:
 - [x] Today tasks are orange
 - [x] Completed tasks are green and crossed out
 - [x] Fix project task refresh after removal & Project removal redirect
+- [x] Add task repeating feature (daily, weekly, monthly, yearly)
 - [ ] Better task display
