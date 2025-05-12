@@ -19,7 +19,7 @@ const addProjectBtn = document.getElementById("addProjectBtn");
 // Check if any tasks exist
 const storedTasks = localStorage.getItem('allTasks');
 allTasks = storedTasks ? JSON.parse(storedTasks).map(task => 
-    new Task(task.title, task.description, task.dueDate, task.priority, task.completed, task.expired, task.project)
+    new Task(task.title, task.description, task.dueDate, task.priority, task.completed, task.expired, task.project, task.repeat)
 ) : [];
 
 // Check if any projects exist
@@ -130,6 +130,7 @@ function refreshDisplay() {
 
     sortTasks();
     allTasksExpiredCheck();
+    updateRepeatingTasks();
 
     // Update the view depending on which tasks were displayed
     if (displayMode === 0) displayAllTasks();
@@ -145,6 +146,7 @@ function refreshProjectDisplay(project) {
 
     sortTasks();
     allTasksExpiredCheck();
+    updateRepeatingTasks();
 
     displayProjectTasks(project);
 }
@@ -208,11 +210,48 @@ function newTaskDialog() {
     priorityInput.style.marginBottom = "8px";
     newTaskDial.append(priorityInput);
 
+    // Repeat Task Div
+    const repeatOptions = [
+        { value: "daily", label: "Daily" },
+        { value: "weekly", label: "Weekly" },
+        { value: "monthly", label: "Monthly" },
+        { value: "yearly", label: "Yearly" }
+    ];
+
+    const repeatDiv = document.createElement("div");
+    repeatDiv.className = "repeat-div";
+    repeatDiv.style.display = "flex";
+    repeatDiv.style.gap = "10px";
+
+    const repeatCheckbox = document.createElement("input");
+    repeatCheckbox.type = "checkbox";
+    repeatDiv.append(repeatCheckbox);
+
+    const repeatLabel = document.createElement("div");
+    repeatLabel.textContent = "Repeat?";
+    repeatDiv.append(repeatLabel);
+
+    const repeatSelect = document.createElement("select");
+    repeatSelect.disabled = true;
+    
+    repeatCheckbox.addEventListener("change", () => {
+        repeatSelect.disabled = !repeatCheckbox.checked;
+    });
+
+    repeatOptions.forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt.value;
+        option.textContent = opt.label;
+        repeatSelect.appendChild(option);
+    });
+    repeatDiv.append(repeatSelect);
+
+    newTaskDial.append(repeatDiv);
+
+    // Buttons
     const buttonDiv = document.createElement("div");
     buttonDiv.className = "button-group";
 
-
-    // Buttons
     const closeBtn = document.createElement("button");
     closeBtn.textContent = "Cancel";
     closeBtn.className = "cancel-btn";
@@ -242,16 +281,23 @@ function newTaskDialog() {
         // Check if all fields are filled
         if (titleInput.value == "" || descInput.value == "" || dueDateInput.value == "" || priorityInput.value == "") {
             alert("Please fill out all the fields with the correct values.");
-        }
-        else {
+        } else {
 
             if (allProjects.includes(contentTitle.textContent)) {
-                var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, contentTitle.textContent);
+                if (repeatCheckbox.checked)
+                    var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, contentTitle.textContent, repeatSelect.value);
+                else 
+                    var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, contentTitle.textContent);
+
                 saveNewTask(tempTask);
                 refreshProjectDisplay(contentTitle.textContent);
 
             } else {
-                var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, "General");
+                if (repeatCheckbox.checked)
+                    var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, "General", repeatSelect.value);
+                else 
+                    var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, "General");
+
                 saveNewTask(tempTask);
                 refreshDisplay();
             }
@@ -310,7 +356,7 @@ function editTaskDialog(task) {
 
     const dueDateInput = document.createElement("input");
     dueDateInput.type = "date";
-    dueDateInput.value = task.dueDate;
+    dueDateInput.value = task.dueDate.toString().split('T')[0];
     var tempToday = new Date();
     dueDateInput.min = tempToday.getFullYear() + "-" + (tempToday.getMonth() + 1).toString() + "-" + tempToday.getDate();
     editTaskDial.append(dueDateInput);
@@ -326,6 +372,48 @@ function editTaskDialog(task) {
     priorityInput.max = "3";
     priorityInput.value = task.priority;
     editTaskDial.append(priorityInput);
+
+    // Repeat Task Div
+    const repeatOptions = [
+        { value: "daily", label: "Daily" },
+        { value: "weekly", label: "Weekly" },
+        { value: "monthly", label: "Monthly" },
+        { value: "yearly", label: "Yearly" }
+    ];
+
+    const repeatDiv = document.createElement("div");
+    repeatDiv.className = "repeat-div";
+
+    const repeatCheckbox = document.createElement("input");
+    repeatCheckbox.type = "checkbox";
+    repeatDiv.append(repeatCheckbox);
+
+    const repeatLabel = document.createElement("div");
+    repeatLabel.textContent = "Repeat?";
+    repeatDiv.append(repeatLabel);
+
+    const repeatSelect = document.createElement("select");
+    repeatSelect.disabled = true;
+    
+    repeatCheckbox.addEventListener("change", () => {
+        repeatSelect.disabled = !repeatCheckbox.checked;
+    });
+
+    repeatOptions.forEach(opt => {
+        const option = document.createElement("option");
+        option.value = opt.value;
+        option.textContent = opt.label;
+        repeatSelect.appendChild(option);
+    });
+    repeatDiv.append(repeatSelect);
+
+    if (task.repeat != "never") {
+        repeatCheckbox.checked = true;
+        repeatSelect.disabled = false;
+        repeatSelect.value = task.repeat;
+    }
+
+    editTaskDial.append(repeatDiv);
 
     // Buttons
     const buttonDiv = document.createElement("div");
@@ -365,13 +453,19 @@ function editTaskDialog(task) {
             task.description = descInput.value;
             task.dueDate = dueDateInput.value;
             task.priority = priorityInput.value;
+            if (!repeatCheckbox.checked) task.repeat = "never";
+            else task.repeat = repeatSelect.value;
 
             saveAllTasks();
 
             editTaskDial.close();
             editTaskDial.remove();
 
-            refreshDisplay();
+            if (task.project != "General") {
+                refreshProjectDisplay(task.project);
+            } else {
+                refreshDisplay();
+            }
         }
     });
 
@@ -516,11 +610,11 @@ function displayTask(task) {
     buttonsDiv.className = "task-buttons";
 
     const editDiv = document.createElement("button");
-    editDiv.className = "fa fa-pencil-square-o taskButtons edit-btn";
+    editDiv.className = "fa-solid fa-pen-to-square taskButtons edit-btn";
     buttonsDiv.appendChild(editDiv);
 
     const deleteDiv = document.createElement("button");
-    deleteDiv.className = "fa fa-times taskButtons delete-btn";
+    deleteDiv.className = "fa-solid fa-trash taskButtons delete-btn";
     buttonsDiv.appendChild(deleteDiv);
 
     taskHeader.appendChild(buttonsDiv);
@@ -539,9 +633,8 @@ function displayTask(task) {
     const todayDate = new Date();
 
     // Set the status of the task
-
     if (task.completed){
-        statusDiv.textContent = "Completed";
+        statusDiv.textContent = "Completed✅";
         dueDateDiv.textContent = monthsLong[taskDueDate.getMonth()] + " " + taskDueDate.getDate() + ", " + taskDueDate.getFullYear();
         checkbox.checked = true;
         titleDiv.style.textDecoration = "line-through";
@@ -569,6 +662,23 @@ function displayTask(task) {
             newDiv.classList.add("task-status-upcoming");
         }    
     }
+
+    const bottomDiv = document.createElement("div");
+    bottomDiv.style.display = "flex";
+    bottomDiv.style.alignItems = "flex-end";
+    bottomDiv.style.justifyContent = "space-between";
+    bottomDiv.appendChild(dueDateDiv);
+
+    // UI will show the symbol and repeat interval when it is set to something different than "never"
+    if (task.repeat != "never") {
+        const repeatInfo = document.createElement("i");
+        repeatInfo.className = "fa-solid fa-repeat";
+        repeatInfo.textContent = ` ${task.repeat}`;
+        bottomDiv.appendChild(repeatInfo);
+    }
+
+    newDiv.appendChild(bottomDiv);
+
 
     deleteDiv.addEventListener('click', () => {
         deleteTask(task);
@@ -609,8 +719,6 @@ function displayTask(task) {
                 refreshDisplay();
         }
     });    
-    
-    newDiv.appendChild(dueDateDiv);
 
     content.appendChild(newDiv);
 }
@@ -634,7 +742,7 @@ removeCompleted.addEventListener('click', () => {
 
 //#endregion
 
-//#region Expired Tasks Helper Functions
+//#region Helper Functions
 
 function isExpired(task) {
     const taskDueDate = new Date(task.dueDate);
@@ -664,6 +772,55 @@ function allTasksExpiredCheck() {
             allTasks[i].expired = true;
         }
     }
+}
+
+function updateRepeatingTasks() {
+    var todayDate = new Date();
+
+    var yesterdayDate = new Date()
+    yesterdayDate.setDate(todayDate.getDate() - 1);
+
+    allTasks.forEach(task => {
+        var taskDate = new Date(task.dueDate);
+
+        switch (task.repeat) {
+            case 'daily':
+                if (taskDate <= yesterdayDate) {
+                    task.dueDate = todayDate;
+                }
+                break;
+            case 'weekly':
+                if (taskDate <= yesterdayDate) {
+                    while (taskDate < yesterdayDate) {
+                        taskDate.setDate(taskDate.getDate() + 7);
+                    }
+                    task.dueDate = taskDate;
+                }
+                break;
+            case 'monthly':
+                if (taskDate <= yesterdayDate) {
+                    while (taskDate < yesterdayDate) {
+                        taskDate.setMonth(taskDate.getMonth() + 1);
+                    }
+                    task.dueDate = taskDate;
+                }
+                break;
+            case 'yearly':
+                if (taskDate <= yesterdayDate) {
+                    while (taskDate < yesterdayDate) {
+                        taskDate.setFullYear(taskDate.getFullYear() + 1);
+                    }
+                    task.dueDate = taskDate;
+                }
+                break;
+            defualt:
+                break;
+        }
+    });
+}
+
+function stripTime(date) {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
 //#endregion
