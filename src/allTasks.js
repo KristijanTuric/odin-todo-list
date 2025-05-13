@@ -787,6 +787,8 @@ function updateRepeatingTasks() {
             case 'daily':
                 if (taskDate <= yesterdayDate) {
                     task.dueDate = todayDate;
+                    task.completed = false;
+                    task.expired = false;
                 }
                 break;
             case 'weekly':
@@ -795,6 +797,8 @@ function updateRepeatingTasks() {
                         taskDate.setDate(taskDate.getDate() + 7);
                     }
                     task.dueDate = taskDate;
+                    task.completed = false;
+                    task.expired = false;
                 }
                 break;
             case 'monthly':
@@ -803,6 +807,8 @@ function updateRepeatingTasks() {
                         taskDate.setMonth(taskDate.getMonth() + 1);
                     }
                     task.dueDate = taskDate;
+                    task.completed = false;
+                    task.expired = false;
                 }
                 break;
             case 'yearly':
@@ -811,16 +817,14 @@ function updateRepeatingTasks() {
                         taskDate.setFullYear(taskDate.getFullYear() + 1);
                     }
                     task.dueDate = taskDate;
+                    task.completed = false;
+                    task.expired = false;
                 }
                 break;
-            defualt:
+            default:
                 break;
         }
     });
-}
-
-function stripTime(date) {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
 //#endregion
