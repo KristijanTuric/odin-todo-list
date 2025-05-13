@@ -824,9 +824,11 @@ function updateRepeatingTasks() {
             default:
                 break;
         }
+        saveAllTasks();
+        console.log("A task dueDate was updated.");
     });
 
-    saveAllTasks();
+    
 }
 
 //#endregion
