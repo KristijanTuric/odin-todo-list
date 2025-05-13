@@ -825,6 +825,8 @@ function updateRepeatingTasks() {
                 break;
         }
     });
+
+    saveAllTasks();
 }
 
 //#endregion
