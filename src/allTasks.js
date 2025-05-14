@@ -29,7 +29,17 @@ allProjects = JSON.parse(localStorage.getItem('allProjects')) || [];
 window.onload = function() {
     refreshDisplay();
     displayProjects();
+    normalizeTaskDueDates();
+    console.log("Website loaded!");
+
+    // TODO: Remove after testing
+    allTasks.forEach(task => {
+        var tempDate = new Date(task.dueDate);
+        console.log(tempDate);
+    })
 }
+
+
 
 //#endregion
 
@@ -282,21 +292,24 @@ function newTaskDialog() {
         if (titleInput.value == "" || descInput.value == "" || dueDateInput.value == "" || priorityInput.value == "") {
             alert("Please fill out all the fields with the correct values.");
         } else {
+            
+            var normalisedDueDate = new Date(dueDateInput.value);
+            normalisedDueDate.setHours(0, 0, 0, 0);
 
             if (allProjects.includes(contentTitle.textContent)) {
                 if (repeatCheckbox.checked)
-                    var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, contentTitle.textContent, repeatSelect.value);
+                    var tempTask = new Task(titleInput.value, descInput.value, normalisedDueDate, priorityInput.value, false, false, contentTitle.textContent, repeatSelect.value);
                 else 
-                    var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, contentTitle.textContent);
+                    var tempTask = new Task(titleInput.value, descInput.value, normalisedDueDate, priorityInput.value, false, false, contentTitle.textContent);
 
                 saveNewTask(tempTask);
                 refreshProjectDisplay(contentTitle.textContent);
 
             } else {
                 if (repeatCheckbox.checked)
-                    var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, "General", repeatSelect.value);
+                    var tempTask = new Task(titleInput.value, descInput.value, normalisedDueDate, priorityInput.value, false, false, "General", repeatSelect.value);
                 else 
-                    var tempTask = new Task(titleInput.value, descInput.value, dueDateInput.value, priorityInput.value, false, false, "General");
+                    var tempTask = new Task(titleInput.value, descInput.value, normalisedDueDate, priorityInput.value, false, false, "General");
 
                 saveNewTask(tempTask);
                 refreshDisplay();
@@ -449,9 +462,12 @@ function editTaskDialog(task) {
             alert("Please fill out all the fields with the correct values.");
         }
         else {
+            var normalisedDueDate = new Date(dueDateInput.value);
+            normalisedDueDate.setHours(0, 0, 0, 0);
+
             task.title = titleInput.value;
             task.description = descInput.value;
-            task.dueDate = dueDateInput.value;
+            task.dueDate = normalisedDueDate;
             task.priority = priorityInput.value;
             if (!repeatCheckbox.checked) task.repeat = "never";
             else task.repeat = repeatSelect.value;
@@ -482,6 +498,20 @@ function editTaskDialog(task) {
 // Save the current task state to localStorage
 function saveAllTasks() {
     localStorage.setItem('allTasks', JSON.stringify(allTasks));
+}
+
+// Sets the time for every task to midnight
+function normalizeTaskDueDates() {
+    allTasks.forEach(task => {
+        const date = new Date(task.dueDate);
+
+        if (date.getHours() != 0 || date.getMinutes() != 0 || date.getSeconds() != 0 || date.getMilliseconds() != 0) {
+            date.setHours(0, 0, 0, 0);
+            task.dueDate = date;
+        }
+    })
+
+    saveAllTasks();
 }
 
 // Confirmation dialog for deleting tasks
@@ -776,12 +806,15 @@ function allTasksExpiredCheck() {
 
 function updateRepeatingTasks() {
     var todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
 
     var yesterdayDate = new Date()
     yesterdayDate.setDate(todayDate.getDate() - 1);
+    yesterdayDate.setHours(0, 0, 0, 0);
 
     allTasks.forEach(task => {
         var taskDate = new Date(task.dueDate);
+        taskDate.setHours(0, 0, 0, 0);
 
         switch (task.repeat) {
             case 'daily':
@@ -789,6 +822,7 @@ function updateRepeatingTasks() {
                     task.dueDate = todayDate;
                     task.completed = false;
                     task.expired = false;
+                    
                 }
                 break;
             case 'weekly':
@@ -824,11 +858,9 @@ function updateRepeatingTasks() {
             default:
                 break;
         }
-        saveAllTasks();
-        console.log("A task dueDate was updated.");
+        
     });
-
-    
+    saveAllTasks();
 }
 
 //#endregion
