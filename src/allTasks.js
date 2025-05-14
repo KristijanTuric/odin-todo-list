@@ -31,12 +31,6 @@ window.onload = function() {
     displayProjects();
     normalizeTaskDueDates();
     console.log("Website loaded!");
-
-    // TODO: Remove after testing
-    allTasks.forEach(task => {
-        var tempDate = new Date(task.dueDate);
-        console.log(tempDate);
-    })
 }
 
 
